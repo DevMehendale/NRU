@@ -1,0 +1,1 @@
+Permuted Sequential Mnist Task
