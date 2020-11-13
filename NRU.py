@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import numpy as np
 import math
 import matplotlib.pyplot as plt
@@ -23,38 +17,18 @@ import pickle
 import torch
 warnings.filterwarnings('ignore')
 
-
-# In[ ]:
-
-
 data = pd.read_csv('Mnist/mnist_train.csv')
 data_test = pd.read_csv('Mnist/mnist_test.csv')
 
-
-# In[ ]:
-
-
 data = data.sample(frac=1,random_state=13,axis=1).reset_index(drop=True)    #index reset, if not done, was throwing an error on kubernetes cluster
-
-
-# In[ ]:
-
 
 Y=np.array(data['label'])
 X=np.array(data.drop(['label'],axis=1))
 X_train, X_val, Y_train, Y_val = train_test_split(X, Y, random_state=0)
 print(X_train.shape, X_val.shape)
 
-
-# In[ ]:
-
-
 X_train, Y_train, X_val, Y_val = map(torch.tensor, (X_train, Y_train, X_val, Y_val))
 print(X_train.shape, Y_train.shape)
-
-
-# In[ ]:
-
 
 class NRUcell(torch.nn.Module):
     def __init__(self,input_dim, hidden_dim, memory_dim, num_heads,use_relu=False,_layer_norm=False):
@@ -114,12 +88,6 @@ class NRUcell(torch.nn.Module):
         return h,m
             
             
-        
-
-
-# In[ ]:
-
-
 class NRUModel(torch.nn.Module):
     def __init__(self, input_dim, hidden_dim, memory_dim, batch_size, output_dim,num_heads,use_relu=False,_layer_norm=False):
         super(NRUModel,self).__init__()
@@ -150,9 +118,6 @@ class NRUModel(torch.nn.Module):
         return out
 
 
-# In[ ]:
-
-
 input_dim=1
 hidden_dim=212
 memory_dim=256  
@@ -166,28 +131,14 @@ use_relu=False
 _layer_norm=False
 rseed=5
 
-
-# In[ ]:
-
-
 torch.manual_seed(rseed)
-
-
-# In[ ]:
 
 
 model=NRUModel(input_dim, hidden_dim, memory_dim, batch_size, output_dim,num_heads)
 model.cuda()
 
-
-# In[ ]:
-
-
 loss_func = torch.nn.CrossEntropyLoss(reduction='mean')
 optimizer= torch.optim.Adam(model.parameters(), lr=lr)
-
-
-# In[ ]:
 
 
 X_train=X_train.float()
@@ -195,17 +146,9 @@ X_val=X_val.float()
 Y_train=Y_train
 Y_val=Y_val
 
-
-# In[ ]:
-
-
 def loss_fn(out,y):
     loss = loss_func(out, y.cuda())
     return loss
-
-
-# In[ ]:
-
 
 def evaluate(model,x,y):
     model.eval()
@@ -224,10 +167,6 @@ def evaluate(model,x,y):
     accuracy=100 * correct / total
     return accuracy
 
-
-# In[ ]:
-
-
 def step(model,inputs,y):
         optimizer.zero_grad()
         outputs = model(inputs)
@@ -240,10 +179,6 @@ def step(model,inputs,y):
 
         optimizer.step()
         return loss
-
-
-# In[ ]:
-
 
 epochs=1000
 iteration=0
@@ -278,19 +213,9 @@ for epoch in range(epochs):
     
     
 
-        
-        
-
-
-# In[ ]:
-
-
 mylist=[acc_train,acc_val,loss_train]
 with open('nru_graph.pkl', 'wb') as f:
     pickle.dump(mylist, f)
-
-
-# In[ ]:
 
 
 torch.save(model.state_dict(), 'nru.pt')
