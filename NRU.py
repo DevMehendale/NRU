@@ -5,12 +5,9 @@ import matplotlib.colors
 import time
 import pandas as pd
 from sklearn.model_selection import train_test_split
-#from tqdm import tqdm_notebook 
 
-#from IPython.display import HTML
 import warnings
-#from sklearn.preprocessing import OneHotEncoder
-#from sklearn.datasets import make_blobs
+
 from torch.nn.utils import clip_grad_norm_
 import pickle
 
