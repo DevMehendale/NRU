@@ -177,7 +177,7 @@ def step(model,inputs,y):
         optimizer.step()
         return loss
 
-epochs=1000
+epochs=100
 iteration=0
 acc_train=[]
 acc_val=[]
